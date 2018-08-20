@@ -35,5 +35,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/atlassubbed/play-toposort.git"
+  },
+  "dependencies": {
+    "atlas-basic-timer": "^2.0.0"
   }
 }
