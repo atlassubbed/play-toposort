@@ -6,8 +6,16 @@
     "test-server": "mocha --colors --watch --recursive './test/**/*.test.js'",
     "test": "mocha --colors --recursive './test/**/*.test.js'"
   },
+  "private": true,
   "main": "./src/index.js",
-  "keywords": [],
+  "keywords": [
+    "atlassubbed",
+    "playground",
+    "graphs",
+    "topological-sort",
+    "depth-first",
+    "breadth-first"
+  ],
   "author": "atlassubbed <atlassubbed@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
