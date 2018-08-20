@@ -4,7 +4,8 @@
   "description": "Playground for testing toposort implementations and graph walking algorithms.",
   "scripts": {
     "test-server": "mocha --colors --watch --recursive './test/**/*.test.js'",
-    "test": "mocha --colors --recursive './test/**/*.test.js'"
+    "test": "mocha --colors --recursive './test/**/*.test.js'",
+    "start": "node ./src/index"
   },
   "private": true,
   "main": "./src/index.js",
