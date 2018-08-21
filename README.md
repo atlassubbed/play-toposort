@@ -32,4 +32,4 @@ Some of these libraries use naive traversal methods like BFS or DFS to track cha
 
 ## philosophy
 
-A topologial sort that encounters a cylic construction should either return false (to every previous turtle) -- ultimately returning false instead of a list -- or should throw an error. The only acceptable "graceful" handling of a cylic graph in a program which only allows DAGs is to tell the developer that they have made a mistake and should not ship their program. Otherwise, we have to establish some sort of convention for patching cyclic dependencies -- and that just seems gimmicky.
+A topologial sort that encounters a cylic construction should either return `false` (to every previous turtle) -- ultimately returning false instead of a list -- or should throw an `error`. The only acceptable "graceful" handling of a cylic graph in a program which only allows DAGs is to tell the developer that they have made a mistake and should not ship their program. Otherwise, we have to establish some sort of convention for patching cyclic dependencies -- and that just seems gimmicky.

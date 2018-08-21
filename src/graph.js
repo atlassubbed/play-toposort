@@ -1,42 +1,53 @@
-const { randInsert, id, randInt } = require("./util");
+const { randInsert, id, randInt, randSample } = require("./util");
 
-// n^2/2 ~ n^2 time
-const genDAG = (n, p) => {
+// n time
+const genSingletons = n => {
   const nodes = [];
-  for (let i = 0; i < n; i++){
-    const parent = {name: i}, next = [];
-    for (let j = 0; j < i; j++)
-      if (Math.random() < p) 
-        randInsert(next,nodes[j]);
-    parent.next = next;
-    nodes.push(parent);
-  }
-  return nodes.pop();
-}
-
-// n^2 time
-const genDG = (n, p) => {
-  const nodes = [];
-  for (let i = 0; i < n; i++) 
-    nodes.push({name:i});
-  for (let i = 0; i < n; i++){
-    const parent = nodes[i], next = [];
-    for (let j = 0; j < n; j++)
-      if (j !== i && Math.random() < p)
-        randInsert(next, nodes[j]);
-    parent.next = next;
-  }
-  return nodes.pop();
+  while(n--) nodes.push({name: id(), next: []});
+  return (nodes[0].nodes = nodes)[0];
 }
 
 // Sum((d/2)^i)[0,h-1] ~ (d/2)^h-1 time
-const genTree = (h, d) => {
+const genTree = (h, d, _root) => {
   if (!h) return null;
-  const next = [], name = id();
-  let deg = randInt(d);
+  const n = {name: id(), next: [], alt: []};
+  if (!_root) n.nodes = [_root = n];
+  else _root.nodes.push(n)
+  let deg = randInt(d+1), next = n.next;
   if (--h && deg) while(deg--) 
-      next.push(genTree(h, d));
-  return {name, next}
+      randInsert(next, genTree(h, d, _root));
+  return n
 }
 
-module.exports = { genDG, genDAG, genTree }
+// ~ n^2 time
+const genGraph = (n, p, acyclic) => {
+  const g = genSingletons(n), nodes = g.nodes
+  for (let i = 0, parent, next; i < n; i++){
+    next = (parent = nodes[i]).next
+    for (let j = acyclic ? i+1 : 0; j < n; j++)
+      if (j !== i && Math.random() < p)
+        randInsert(next, nodes[j]);
+  }
+  return g;
+}
+
+const genForest = (n, h, d) => {
+  const forest = [];
+  while(n--) forest.push(genTree(h, d));
+  return forest;
+}
+
+const deforestify = (forest, coDeg) => {
+  const n = forest.length;
+  for (let i = 0, nodes; i < n; i++){
+    nodes = forest[i].nodes;
+    for (let j = i+1; j < n; j++){
+      const subset = randSample(nodes, coDeg);
+      for (let node of subset){
+        node.next.push(randSample(forest[j].nodes))
+      }
+    }
+  }
+}
+
+module.exports = { genGraph, genForest, deforestify }
