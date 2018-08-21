@@ -24,6 +24,9 @@ const randSample = (arr, size) => {
   return sample;
 }
 
+// these functions could share:
+// forNodeIn(g, doThis);
+// if doThis returns false, exit the DFS
 const isOrdered = nodes => {
   const n = nodes.length, seen = {};
   let node, name, next;
@@ -47,7 +50,28 @@ const resetGraph = graph => {
   }
 }
 
+const getOutgoingAdjacencyMatrix = graph => {
+  const index = {}, matrix = [], nodes = graph.nodes;
+  // node.name will not necessarily be equal to i-1
+  nodes.forEach((n, i) => index[n.name]=i)
+  nodes.forEach((n, i) => {
+    const row = matrix[i] = Array(nodes.length).fill(0);
+    n.next.forEach((m, j) => {
+      row[index[m.name]] = 1
+    })
+  })
+  return matrix;
+}
+
 const print = graph => console.dir(graph, {depth: null});
+
+const printMatrix = m => {
+  let out = "";
+  m.forEach(row => {
+    out += row.map(i => i || ".").join(" ") + "\n"
+  })
+  console.log(out.trim())
+}
 
 let curId = 0;
 
@@ -55,5 +79,6 @@ const id = () => ++curId;
 
 module.exports = { 
   randInt, randInsert, randSample,
-  isOrdered, resetGraph, print, id,
+  isOrdered, resetGraph, print, printMatrix, id, 
+  getOutgoingAdjacencyMatrix
 }

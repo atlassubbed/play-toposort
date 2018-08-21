@@ -1,4 +1,4 @@
-const { randInsert, id, randInt, randSample } = require("./util");
+const { randInsert, id, randInt, randSample, cannotReach } = require("./util");
 
 // n time
 const genSingletons = n => {
@@ -15,7 +15,7 @@ const genTree = (h, d, _root) => {
   else _root.nodes.push(n)
   let deg = randInt(d+1), next = n.next;
   if (--h && deg) while(deg--) 
-      randInsert(next, genTree(h, d, _root));
+    next.push(genTree(h,d,_root))
   return n
 }
 
@@ -37,15 +37,20 @@ const genForest = (n, h, d) => {
   return forest;
 }
 
+// TODO: The better thing to do is to compute the adjacency matrix
+//   and then switch random zeros to one in the upper-triangular matrix
+//   since we still want an acyclic graph (we'll keep a hashtable of nodes)
+//   Then, this will be O(n) in the number of superfluous edges.
+// e.g. const deforestify = (forest, numSuperfluousEdges) => {...}
 const deforestify = (forest, coDeg) => {
   const n = forest.length;
+  // forward pass, create edges LTR
   for (let i = 0, nodes; i < n; i++){
     nodes = forest[i].nodes;
     for (let j = i+1; j < n; j++){
       const subset = randSample(nodes, coDeg);
-      for (let node of subset){
-        node.next.push(randSample(forest[j].nodes))
-      }
+      for (let node of subset)
+        node.next.push(randSample(forest[j].nodes));
     }
   }
 }

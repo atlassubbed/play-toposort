@@ -1,5 +1,5 @@
-const { isOrdered, resetGraph, print } = require("./util");
-const { genGraph, genForest, deforestify } = require("./graph");
+const { isOrdered, resetGraph, print, printMatrix, getOutgoingAdjacencyMatrix } = require("./util");
+const { genGraph, genForest } = require("./graph");
 const { toposortRecur } = require("./sort");
 const timer = require("atlas-basic-timer")()
 
@@ -11,12 +11,8 @@ const toposort = graph => {
   console.log(`sorted ${result.length} nodes`)
 }
 
-const f = genForest(2, 2, 5)
+const f = genForest(2, 3, 10)
 
-deforestify(f, 10000000)
+const g = genGraph(20, .1, true)
 
-f[0].nodes = null
-f[1].nodes = null
-
-f.forEach(t => print(t))
-f.forEach(t => toposort(t))
+printMatrix(getOutgoingAdjacencyMatrix(g))
