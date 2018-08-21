@@ -9,8 +9,8 @@ const randInsert = (arr, el) => {
   return arr;
 }
 
-// could short circuit if num >= arr.length
-//   but we'll return a new array instead
+// this isn't a formal package or anything
+// so returning the input is fine...
 const randSample = (arr, size) => {
   let n = arr.length;
   if (!size) return arr[randInt(n)];
