@@ -5,6 +5,9 @@
 //   * starting nodes that are children
 let sorted;
 
+// if this is implemented with our own stack
+// then probably can return ASAP if cyclic.
+// Should we prefer avoiding errors? 
 const subsort = node => {
   if (node.collapsing) return false;
   node.collapsing = true;
