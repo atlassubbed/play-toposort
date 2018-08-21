@@ -1,16 +1,9 @@
-const { randInsert, id, randInt, randSample, cannotReach } = require("./util");
-
-// n time
-const genSingletons = n => {
-  const nodes = [];
-  while(n--) nodes.push({name: id(), next: []});
-  return (nodes[0].nodes = nodes)[0];
-}
+const { randInsert, id, randInt, randSample, getAdjMatrix } = require("./util");
 
 // Sum((d/2)^i)[0,h-1] ~ (d/2)^h-1 time
 const genTree = (h, d, _root) => {
   if (!h) return null;
-  const n = {name: id(), next: [], alt: []};
+  const n = {name: id(), next: [], perturbs: []};
   if (!_root) n.nodes = [_root = n];
   else _root.nodes.push(n)
   let deg = randInt(d+1), next = n.next;
@@ -19,40 +12,51 @@ const genTree = (h, d, _root) => {
   return n
 }
 
+const genForest = (n, h, d) => {
+  const roots = [], name = id(), nodes = [];
+  while(n--) {
+    const tree = genTree(h, d);
+    roots.push(tree)
+    nodes.push(...tree.nodes)
+  }
+  return {name, roots, nodes};
+}
+
+// n time
+const genSingletons = n => {
+  const nodes = [];
+  while(n--) nodes.push({name: id(), next: []});
+  return (nodes[0].nodes = nodes)[0];
+}
+
 // ~ n^2 time
-const genGraph = (n, p, acyclic) => {
+const genGraph = (n, p, cyclic) => {
   const g = genSingletons(n), nodes = g.nodes
   for (let i = 0, parent, next; i < n; i++){
     next = (parent = nodes[i]).next
-    for (let j = acyclic ? i+1 : 0; j < n; j++)
+    for (let j = cyclic ? 0 : i+1; j < n; j++)
       if (j !== i && Math.random() < p)
         randInsert(next, nodes[j]);
   }
   return g;
 }
 
-const genForest = (n, h, d) => {
-  const forest = [];
-  while(n--) forest.push(genTree(h, d));
-  return forest;
-}
-
-// TODO: The better thing to do is to compute the adjacency matrix
-//   and then switch random zeros to one in the upper-triangular matrix
-//   since we still want an acyclic graph (we'll keep a hashtable of nodes)
-//   Then, this will be O(n) in the number of superfluous edges.
-// e.g. const deforestify = (forest, numSuperfluousEdges) => {...}
-const deforestify = (forest, coDeg) => {
-  const n = forest.length;
-  // forward pass, create edges LTR
-  for (let i = 0, nodes; i < n; i++){
-    nodes = forest[i].nodes;
-    for (let j = i+1; j < n; j++){
-      const subset = randSample(nodes, coDeg);
-      for (let node of subset)
-        node.next.push(randSample(forest[j].nodes));
+// ~ n^2 time
+const perturb = (g, p, cyclic) => {
+  const index = {}, nodes = g.nodes, n = nodes.length;
+  nodes.forEach((n, i) => index[n.name]=i)
+  const adj = getAdjMatrix({nodes});
+  for (let i = 0, parent, next; i < n; i++){
+    next = (parent = nodes[i]).next
+    for (let j = cyclic ? 0 : i+1, child; j < n; j++){
+      if (j === i) continue;
+      const adjI = index[parent.name];
+      const adjJ = index[(child = nodes[j]).name];
+      if (!adj[adjI][adjJ] && Math.random() < p){
+        randInsert(next, child);
+      }
     }
   }
 }
 
-module.exports = { genGraph, genForest, deforestify }
+module.exports = { genGraph, genForest, perturb }

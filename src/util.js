@@ -50,7 +50,7 @@ const resetGraph = graph => {
   }
 }
 
-const getOutgoingAdjacencyMatrix = graph => {
+const getAdjMatrix = graph => {
   const index = {}, matrix = [], nodes = graph.nodes;
   // node.name will not necessarily be equal to i-1
   nodes.forEach((n, i) => index[n.name]=i)
@@ -70,7 +70,7 @@ const printMatrix = m => {
   m.forEach(row => {
     out += row.map(i => i || ".").join(" ") + "\n"
   })
-  console.log(out.trim())
+  console.log(out)
 }
 
 let curId = 0;
@@ -80,5 +80,5 @@ const id = () => ++curId;
 module.exports = { 
   randInt, randInsert, randSample,
   isOrdered, resetGraph, print, printMatrix, id, 
-  getOutgoingAdjacencyMatrix
+  getAdjMatrix
 }

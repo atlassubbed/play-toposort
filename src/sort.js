@@ -14,7 +14,7 @@ const subsort = node => {
   let next = node.next, n = next.length, child;
   while(n--)
     if (!(child = next[n]).collapsed)
-      if (subsort(child)) 
+      if (subsort(child) === false) 
         return false;
   node.collapsed = !(node.collapsing = false);
   sorted.push(node);
