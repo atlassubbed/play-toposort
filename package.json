@@ -38,6 +38,7 @@
     "url": "https://github.com/atlassubbed/play-toposort.git"
   },
   "dependencies": {
-    "atlas-basic-timer": "^2.0.0"
+    "atlas-basic-timer": "^2.0.0",
+    "atlas-random": "^1.0.0"
   }
 }
